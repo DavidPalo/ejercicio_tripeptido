@@ -488,9 +488,8 @@ Protein             3
 
 [ system ]
 ; Name
-Protein in water
+Protein
 
 [ molecules ]
 ; Compound        #mols
 Protein             1
-SOL               859
