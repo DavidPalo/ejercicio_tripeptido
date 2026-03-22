@@ -1,0 +1,444 @@
+---
+title: "Untitled"
+output: html_document
+date: "2026-03-22"
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+```
+
+## R Markdown
+
+This is an R Markdown document. Markdown is a simple formatting syntax for authoring HTML, PDF, and MS Word documents. For more details on using R Markdown see <http://rmarkdown.rstudio.com>.
+
+When you click the **Knit** button a document will be generated that includes both content as well as the output of any embedded R code chunks within the document. You can embed an R code chunk like this:
+
+```{r cars}
+summary(cars)
+```
+
+## Including Plots
+
+You can also embed plots, for example:
+
+```{r pressure, echo=FALSE}
+plot(pressure)
+```
+
+Note that the `echo = FALSE` parameter was added to the code chunk to prevent printing of the R code that generated the plot.
+
+#Tema de los gráficos:
+
+```{r}
+library(ggplot2)
+
+tema_paper <- theme_minimal() +
+  theme(
+    text = element_text(size = 14, family = "serif"),
+    plot.title = element_text(size = 16, face = "bold", hjust = 0.5),
+    plot.subtitle = element_text(size = 12, hjust = 0.5),
+    axis.title = element_text(size = 14, face = "bold"),
+    axis.text = element_text(size = 12),
+    legend.title = element_text(size = 12, face = "bold"),
+    legend.text = element_text(size = 11),
+    panel.grid.minor = element_blank(),
+    panel.border = element_rect(colour = "black", fill = NA, size = 0.5),
+    plot.margin = margin(10, 10, 10, 10)
+  )
+```
+
+
+
+
+##Gráficos
+
+```{r}
+library(ggplot2)
+library(dplyr)
+library(tidyr)
+library(patchwork)
+
+tema_paper <- theme_minimal() +
+  theme(
+    text = element_text(size = 14, family = "serif"),
+    plot.title = element_text(size = 16, face = "bold", hjust = 0.5),
+    plot.subtitle = element_text(size = 12, hjust = 0.5),
+    axis.title = element_text(size = 14, face = "bold"),
+    axis.text = element_text(size = 12),
+    legend.title = element_text(size = 12, face = "bold"),
+    legend.text = element_text(size = 11),
+    panel.grid.minor = element_blank(),
+    panel.border = element_rect(colour = "black", fill = NA, size = 0.5),
+    plot.margin = margin(10, 10, 10, 10)
+  )
+
+ruta_298 <- "/home/alumno16/MM/ejercicio_tripeptido/4-analysis/298K"
+ruta_400 <- "/home/alumno16/MM/ejercicio_tripeptido/4-analysis/400K"
+
+# -------------------------------------------------------
+# 1. ENERGIA CINETICA
+# -------------------------------------------------------
+data_ec_298 <- read.table(file.path(ruta_298, "kinetic.xvg"), comment.char = "#", header = FALSE)
+colnames(data_ec_298) <- c("Tiempo", "Energia")
+
+data_ec_400 <- read.table(file.path(ruta_400, "kinetic.xvg"), comment.char = "#", header = FALSE)
+colnames(data_ec_400) <- c("Tiempo", "Energia")
+
+p_ec_298 <- ggplot(data_ec_298, aes(x = Tiempo, y = Energia)) +
+  geom_line(color = "blue") +
+  labs(title = "Energia Cinetica vs Tiempo (298 K)",
+       x = "Tiempo (ps)", y = "Energia (kJ/mol)") +
+  tema_paper
+
+p_ec_400 <- ggplot(data_ec_400, aes(x = Tiempo, y = Energia)) +
+  geom_line(color = "orange") +
+  labs(title = "Energia Cinetica vs Tiempo (400 K)",
+       x = "Tiempo (ps)", y = "Energia (kJ/mol)") +
+  tema_paper
+
+ggsave(file.path(ruta_298, "energia_cinetica_298.svg"), p_ec_298, width = 8, height = 5)
+ggsave(file.path(ruta_400, "energia_cinetica_400.svg"), p_ec_400, width = 8, height = 5)
+
+# -------------------------------------------------------
+# 2. ENERGIA TOTAL
+# -------------------------------------------------------
+data_et_298 <- read.table(file.path(ruta_298, "energy.xvg"), comment.char = "#", header = FALSE)
+colnames(data_et_298) <- c("Tiempo", "Energia")
+
+data_et_400 <- read.table(file.path(ruta_400, "energy.xvg"), comment.char = "#", header = FALSE)
+colnames(data_et_400) <- c("Tiempo", "Energia")
+
+p_et_298 <- ggplot(data_et_298, aes(x = Tiempo, y = Energia)) +
+  geom_line(color = "darkgreen") +
+  labs(title = "Energia Total vs Tiempo (298 K)",
+       x = "Tiempo (ps)", y = "Energia (kJ/mol)") +
+  tema_paper
+
+p_et_400 <- ggplot(data_et_400, aes(x = Tiempo, y = Energia)) +
+  geom_line(color = "purple") +
+  labs(title = "Energia Total vs Tiempo (400 K)",
+       x = "Tiempo (ps)", y = "Energia (kJ/mol)") +
+  tema_paper
+
+ggsave(file.path(ruta_298, "energia_total_298.svg"), p_et_298, width = 8, height = 5)
+ggsave(file.path(ruta_400, "energia_total_400.svg"), p_et_400, width = 8, height = 5)
+
+# -------------------------------------------------------
+# 3. TEMPERATURA vs TIEMPO
+# -------------------------------------------------------
+data_temp_298 <- read.table(file.path(ruta_298, "temp.xvg"), comment.char = "#", header = FALSE)
+colnames(data_temp_298) <- c("Tiempo", "Temperatura")
+
+data_temp_400 <- read.table(file.path(ruta_400, "temp.xvg"), comment.char = "#", header = FALSE)
+colnames(data_temp_400) <- c("Tiempo", "Temperatura")
+
+p_temp_298 <- ggplot(data_temp_298, aes(x = Tiempo, y = Temperatura)) +
+  geom_line(color = "pink") +
+  labs(title = "Temperatura vs Tiempo (298 K)",
+       x = "Tiempo (ps)", y = "Temperatura (K)") +
+  tema_paper
+
+p_temp_400 <- ggplot(data_temp_400, aes(x = Tiempo, y = Temperatura)) +
+  geom_line(color = "red") +
+  labs(title = "Temperatura vs Tiempo (400 K)",
+       x = "Tiempo (ps)", y = "Temperatura (K)") +
+  tema_paper
+
+ggsave(file.path(ruta_298, "temperatura_298.svg"), p_temp_298, width = 8, height = 5)
+ggsave(file.path(ruta_400, "temperatura_400.svg"), p_temp_400, width = 8, height = 5)
+
+# -------------------------------------------------------
+# 4. HISTOGRAMA TEMPERATURA
+# -------------------------------------------------------
+p_hist_298 <- ggplot(data_temp_298, aes(x = Temperatura)) +
+  geom_histogram(fill = "blue", bins = 30, alpha = 0.7) +
+  labs(title = "Histograma de Temperatura (298 K)",
+       x = "Temperatura (K)", y = "Frecuencia") +
+  tema_paper
+
+p_hist_400 <- ggplot(data_temp_400, aes(x = Temperatura)) +
+  geom_histogram(fill = "red", bins = 30, alpha = 0.7) +
+  labs(title = "Histograma de Temperatura (400 K)",
+       x = "Temperatura (K)", y = "Frecuencia") +
+  tema_paper
+
+ggsave(file.path(ruta_298, "histograma_temp_298.svg"), p_hist_298, width = 8, height = 5)
+ggsave(file.path(ruta_400, "histograma_temp_400.svg"), p_hist_400, width = 8, height = 5)
+
+# -------------------------------------------------------
+# 5. DISTANCIAS DE ENLACE
+# -------------------------------------------------------
+leer_xvg <- function(archivo) {
+  lineas <- readLines(archivo)
+  datos <- read.table(text = paste(lineas[!grepl("^[@#]", lineas)],
+             collapse = "\n"), header = FALSE, fill = TRUE)
+  colnames(datos) <- c("Tiempo", "Enlace1", "Enlace2")
+  return(datos)
+}
+
+datos_dist_298 <- leer_xvg(file.path(ruta_298, "dist.xvg"))
+datos_dist_400 <- leer_xvg(file.path(ruta_400, "dist.xvg"))
+
+p_dist <- ggplot() +
+  geom_line(data = datos_dist_298, aes(x = Tiempo, y = Enlace1, color = "298K - C=O")) +
+  geom_line(data = datos_dist_298, aes(x = Tiempo, y = Enlace2, color = "298K - C-N")) +
+  geom_line(data = datos_dist_400, aes(x = Tiempo, y = Enlace1, color = "400K - C=O"), linetype = "dashed") +
+  geom_line(data = datos_dist_400, aes(x = Tiempo, y = Enlace2, color = "400K - C-N"), linetype = "dashed") +
+  labs(title = "Comparacion de Distancias de Enlace (298K vs 400K)",
+       x = "Tiempo (ps)", y = "Distancia (nm)", color = "Condicion") +
+  tema_paper
+
+ggsave(file.path(ruta_298, "distancias_enlace.svg"), p_dist, width = 10, height = 5)
+
+# -------------------------------------------------------
+# 6. ANGULOS DE ENLACE
+# -------------------------------------------------------
+leer_angulo <- function(archivo) {
+  lineas <- readLines(archivo)
+  datos <- read.table(text = paste(lineas[!grepl("^[@#]", lineas)],
+             collapse = "\n"), header = FALSE)
+  colnames(datos) <- c("Tiempo", "Angulo")
+  return(datos)
+}
+
+datos_ang1_298 <- leer_angulo(file.path(ruta_298, "ang_ca_c_o.xvg"))
+datos_ang2_298 <- leer_angulo(file.path(ruta_298, "ang_n_ca_c.xvg"))
+datos_ang1_400 <- leer_angulo(file.path(ruta_400, "ang_ca_c_o.xvg"))
+datos_ang2_400 <- leer_angulo(file.path(ruta_400, "ang_n_ca_c.xvg"))
+
+datos_ang1_298$Grupo <- "298K - CA-C-O"
+datos_ang2_298$Grupo <- "298K - N-CA-C"
+datos_ang1_400$Grupo <- "400K - CA-C-O"
+datos_ang2_400$Grupo <- "400K - N-CA-C"
+
+datos_ang <- rbind(datos_ang1_298, datos_ang2_298, datos_ang1_400, datos_ang2_400)
+
+p_ang <- ggplot(datos_ang, aes(x = Tiempo, y = Angulo, color = Grupo)) +
+  geom_line(alpha = 0.7, size = 0.8) +
+  labs(title = "Comparacion de Angulos de Enlace (298K vs 400K)",
+       subtitle = "Evolucion temporal de los angulos seleccionados",
+       x = "Tiempo (ps)", y = "Angulo (grados)", color = "Condiciones") +
+  tema_paper +
+  theme(legend.position = "bottom")
+
+ggsave(file.path(ruta_298, "angulos_enlace.svg"), p_ang, width = 10, height = 6)
+
+# -------------------------------------------------------
+# 7. ANGULOS DIEDROS
+# -------------------------------------------------------
+leer_dihedros <- function(archivo) {
+  datos <- read.table(archivo, header = FALSE)
+  colnames(datos) <- c("Tiempo", "Phi", "Psi")
+  return(datos)
+}
+
+ala2_298 <- leer_dihedros(file.path(ruta_298, "ala2.dat"))
+ala2_400 <- leer_dihedros(file.path(ruta_400, "ala2.dat"))
+
+ala2_298$Grupo <- "ALA-2 (298K)"
+ala2_400$Grupo <- "ALA-2 (400K)"
+datos_dih <- rbind(ala2_298, ala2_400)
+
+p_phi <- ggplot(datos_dih, aes(x = Tiempo, y = Phi, color = Grupo)) +
+  geom_line(alpha = 0.8, size = 0.8) +
+  labs(title = "Evolucion del Angulo Dihedro Phi (298K vs 400K)",
+       x = "Tiempo (ps)", y = "Phi (grados)") +
+  tema_paper +
+  theme(legend.position = "bottom")
+
+p_psi <- ggplot(datos_dih, aes(x = Tiempo, y = Psi, color = Grupo)) +
+  geom_line(alpha = 0.8, size = 0.8) +
+  labs(title = "Evolucion del Angulo Dihedro Psi (298K vs 400K)",
+       x = "Tiempo (ps)", y = "Psi (grados)") +
+  tema_paper +
+  theme(legend.position = "bottom")
+
+ggsave(file.path(ruta_298, "diedro_phi.svg"), p_phi, width = 8, height = 5)
+ggsave(file.path(ruta_298, "diedro_psi.svg"), p_psi, width = 8, height = 5)
+
+# -------------------------------------------------------
+# 8. RADIO DE GIRO
+# -------------------------------------------------------
+data_gyr_298 <- read.table(file.path(ruta_298, "gyrate.xvg"), comment.char = "#", header = FALSE)
+colnames(data_gyr_298) <- c("Tiempo", "Radio_Giro", "Rx", "Ry", "Rz")
+
+data_gyr_400 <- read.table(file.path(ruta_400, "gyrate.xvg"), comment.char = "#", header = FALSE)
+colnames(data_gyr_400) <- c("Tiempo", "Radio_Giro", "Rx", "Ry", "Rz")
+
+data_gyr_298$Grupo <- "298K"
+data_gyr_400$Grupo <- "400K"
+datos_gyr <- rbind(data_gyr_298, data_gyr_400)
+
+p_gyr <- ggplot(datos_gyr, aes(x = Tiempo, y = Radio_Giro, color = Grupo)) +
+  geom_line(alpha = 0.8, size = 0.8) +
+  labs(title = "Evolucion del Radio de Giro",
+       subtitle = "Comparacion entre 298K y 400K",
+       x = "Tiempo (ps)", y = "Radio de Giro (nm)", color = "Temperatura") +
+  tema_paper +
+  theme(legend.position = "bottom")
+
+ggsave(file.path(ruta_298, "radio_giro.svg"), p_gyr, width = 8, height = 5)
+
+# -------------------------------------------------------
+# 9. VELOCIDADES DE 5 ATOMOS
+# -------------------------------------------------------
+leer_xvg_velocidades <- function(archivo) {
+  datos <- read.table(archivo, header = FALSE)
+  datos <- datos[, c(1, 5, 9, 13, 17, 21)]
+  colnames(datos) <- c("Tiempo", "Atomo_1", "Atomo_2", "Atomo_3", "Atomo_4", "Atomo_5")
+  datos %>% pivot_longer(cols = -Tiempo, names_to = "Atomo", values_to = "Velocidad")
+}
+
+datos_vel_298 <- leer_xvg_velocidades(file.path(ruta_298, "veloc.xvg"))
+datos_vel_400 <- leer_xvg_velocidades(file.path(ruta_400, "veloc.xvg"))
+datos_vel_298$Temperatura <- "298K"
+datos_vel_400$Temperatura <- "400K"
+datos_vel <- rbind(datos_vel_298, datos_vel_400)
+
+p_vel <- ggplot(datos_vel, aes(x = Tiempo, y = Velocidad, color = Atomo)) +
+  geom_line(alpha = 0.4) +
+  geom_smooth(method = "loess", se = FALSE, size = 1) +
+  facet_grid(Temperatura ~ Atomo) +
+  labs(title = "Evolucion de la Velocidad de 5 Atomos",
+       subtitle = "Comparacion entre 298K y 400K",
+       x = "Tiempo (ps)", y = "Velocidad (nm/ps)") +
+  tema_paper +
+  theme(legend.position = "none")
+
+ggsave(file.path(ruta_298, "velocidades.svg"), p_vel, width = 14, height = 7)
+```
+
+
+##Gráficos parte opcional
+
+```{r}
+setwd("/home/alumno16/MM/ejercicio_tripeptido/5-extended")
+
+tema_paper <- theme_minimal() +
+  theme(
+    text = element_text(size = 14, family = "serif"),
+    plot.title = element_text(size = 16, face = "bold", hjust = 0.5),
+    plot.subtitle = element_text(size = 12, hjust = 0.5),
+    axis.title = element_text(size = 14, face = "bold"),
+    axis.text = element_text(size = 12),
+    legend.title = element_text(size = 12, face = "bold"),
+    legend.text = element_text(size = 11),
+    panel.grid.minor = element_blank(),
+    panel.border = element_rect(colour = "black", fill = NA, linewidth = 0.5),
+    plot.margin = margin(10, 10, 10, 10)
+  )
+
+setwd("/home/alumno16/MM/ejercicio_tripeptido/5-extended")
+
+file_path <- "temp-opcional.xvg"
+data <- read.table(file_path, comment.char = "#", header = FALSE)
+colnames(data) <- c("Tiempo", "Temperatura")
+
+p_hist <- ggplot(data, aes(x = Temperatura)) +
+  geom_histogram(fill = "green", bins = 30, alpha = 0.7) +
+  labs(
+    title = "Histograma de Temperatura (298 K)",
+    x = "Temperatura (K)",
+    y = "Frecuencia"
+  ) +
+  tema_paper
+
+print(p_hist)
+
+ggsave("Hist_temp.svg", plot = p_hist, width = 8, height = 5)
+
+
+```
+
+
+
+```{r}
+tema_paper <- theme_minimal() +
+  theme(
+    text = element_text(size = 14, family = "serif"),
+    plot.title = element_text(size = 16, face = "bold", hjust = 0.5),
+    plot.subtitle = element_text(size = 12, hjust = 0.5),
+    axis.title = element_text(size = 14, face = "bold"),
+    axis.text = element_text(size = 12),
+    legend.title = element_text(size = 12, face = "bold"),
+    legend.text = element_text(size = 11),
+    panel.grid.minor = element_blank(),
+    panel.border = element_rect(colour = "black", fill = NA, linewidth = 0.5),
+    plot.margin = margin(10, 10, 10, 10)
+  )
+
+leer_xvg_velocidad <- function(archivo) {
+  datos <- read.table(archivo, header = FALSE)[, c(1, 2, 3, 4)]
+  colnames(datos) <- c("Tiempo", "Vx", "Vy", "Vz")
+  datos %>%
+    pivot_longer(
+      cols = c("Vx", "Vy", "Vz"),
+      names_to = "Componente",
+      values_to = "Velocidad"
+    )
+}
+
+archivo_velocidad <- "veloc-opcional.xvg"
+datos_velocidad <- leer_xvg_velocidad(archivo_velocidad)
+
+graficar_componente <- function(datos, componente, color) {
+  ggplot(datos %>% filter(Componente == componente),
+         aes(x = Tiempo, y = Velocidad)) +
+    geom_line(color = color, alpha = 0.7, linewidth = 0.6) +
+    geom_smooth(method = "loess", span = 0.1, se = FALSE,
+                color = "black", linewidth = 1) +
+    labs(
+      title = paste("Evolucion de", componente, "del Primer Atomo"),
+      x = "Tiempo (ps)",
+      y = "Velocidad (nm/ps)"
+    ) +
+    tema_paper
+}
+
+grafico_Vx <- graficar_componente(datos_velocidad, "Vx", "red")
+grafico_Vy <- graficar_componente(datos_velocidad, "Vy", "green")
+grafico_Vz <- graficar_componente(datos_velocidad, "Vz", "blue")
+
+grafico_final <- grafico_Vx / grafico_Vy / grafico_Vz
+
+print(grafico_final)
+
+ggsave("velocidad_componentes_primer_atomo.svg",
+       plot = grafico_final,
+       width = 8,
+       height = 10)
+
+```
+
+```{r}
+datos <- read_table2("rama-opcional.xvg", col_names = c("phi", "psi", "residuo"))
+
+p_rama <- ggplot(datos, aes(x = phi, y = psi)) +
+  stat_density_2d_filled(
+    aes(fill = after_stat(level)),
+    geom = "polygon",
+    contour = TRUE,
+    bins = 30,
+    alpha = 0.8
+  ) +
+  scale_fill_viridis_d(option = "B", direction = -1) +
+  labs(
+    x = expression(phi ~ "(deg)"),
+    y = expression(psi ~ "(deg)"),
+    title = "Diagramas de Ramachandran por Residuo"
+  ) +
+  scale_x_continuous(limits = c(-180, 180), breaks = seq(-180, 180, by = 90)) +
+  scale_y_continuous(limits = c(-180, 180), breaks = seq(-180, 180, by = 90)) +
+  facet_wrap(~residuo, ncol = 3) +
+  tema_paper +
+  theme(
+    legend.position = "right",
+    strip.text = element_text(size = 13, face = "bold"),
+    panel.spacing = unit(1.5, "cm"),
+    axis.text.x = element_text(angle = 0, hjust = 0.5)
+  )
+
+ggsave("rama_residuos.svg", plot = p_rama, width = 14, height = 6, dpi = 600)
+```
+
